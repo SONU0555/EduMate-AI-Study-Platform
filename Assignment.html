@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="Assignment.css" />
+    <link rel="stylesheet" href="NavComponent.css" />
+    <title></title>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <!-- Logo -->
+        <a href="#" class="logo">
+          <span><span style="font-size: 2rem">AI</span> EduMate</span>
+        </a>
+
+        <!-- Desktop Navigation Menu -->
+        <ul class="nav-menu">
+          <li>
+            <a onclick="window.location.href='./index.html'">Dashboard</a>
+          </li>
+          <li><a href="#assignments" class="active">Assignments</a></li>
+          <li><a href="./Pomodoro.html">Pomodoro Timer</a></li>
+          <li><a href="./CareerGuide.html">Career Guide</a></li>
+        </ul>
+
+        <!-- Auth Buttons (Desktop) -->
+        <div class="nav-auth">
+          <button
+            class="btn-login"
+            onclick="window.location.href='./LoginPage.html'"
+          >
+            Login
+          </button>
+          <button
+            class="btn-signup"
+            onclick="window.location.href='./SignupPage.html'"
+          >
+            Sign Up
+          </button>
+        </div>
+
+        <!-- Hamburger Menu Icon -->
+        <div class="hamburger" onclick="toggleMobileMenu()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <ul>
+        <li><a onclick="window.location.href='./index.html'">Dashboard</a></li>
+        <li>
+          <a class="active" href="./Assignment.html" onclick="closeMobileMenu()"
+            >Assignments</a
+          >
+        </li>
+        <li>
+          <a href="./Pomodoro.html" onclick="closeMobileMenu()"
+            >Pomodoro Timer</a
+          >
+        </li>
+        <li>
+          <a href="./CareerGuide.html" onclick="closeMobileMenu()"
+            >Career Guide</a
+          >
+        </li>
+      </ul>
+      <div class="mobile-auth">
+        <button
+          class="btn-login"
+          onclick="window.location.href='./LoginPage.html'"
+        >
+          Login
+        </button>
+        <button
+          class="btn-signup"
+          onclick="window.location.href='./SignupPage.html'"
+        >
+          Sign Up
+        </button>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1 class="page-title">📚 Assignment Tracker</h1>
+        <p class="page-subtitle">Stay organized and never miss a deadline</p>
+      </div>
+
+      <!-- Main Layout -->
+      <div class="main-layout">
+        <!-- Left Column - Assignments -->
+        <div>
+          <!-- Add Assignment Form -->
+          <div class="card">
+            <h2 class="card-title">➕ Add New Assignment</h2>
+            <form class="add-form" id="addForm">
+              <div class="form-group">
+                <label for="title">Assignment Title *</label>
+                <input
+                  type="text"
+                  id="title"
+                  placeholder="e.g., Math Homework Chapter 5"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="subject">Subject *</label>
+                <input
+                  type="text"
+                  id="subject"
+                  placeholder="e.g., Mathematics"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="dueDate">Due Date *</label>
+                <input type="date" id="dueDate" required />
+              </div>
+              <div class="form-group">
+                <label for="priority">Priority *</label>
+                <select id="priority" required>
+                  <option value="">Select Priority</option>
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="low">Low</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="status">Status *</label>
+                <select id="status" required>
+                  <option value="not-started">Not Started</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+              <div class="form-group full-width">
+                <label for="description">Description (Optional)</label>
+                <textarea
+                  id="description"
+                  placeholder="Add any additional details..."
+                ></textarea>
+              </div>
+              <button type="submit" class="btn-add">Add Assignment</button>
+            </form>
+          </div>
+
+          <!-- Assignment List -->
+          <div class="card" style="margin-top: 2rem">
+            <div class="controls-bar">
+              <div class="filter-tabs">
+                <button
+                  class="filter-tab active"
+                  onclick="filterAssignments('all')"
+                >
+                  All
+                </button>
+                <button class="filter-tab" onclick="filterAssignments('today')">
+                  Today
+                </button>
+                <button class="filter-tab" onclick="filterAssignments('week')">
+                  This Week
+                </button>
+                <button
+                  class="filter-tab"
+                  onclick="filterAssignments('completed')"
+                >
+                  Completed
+                </button>
+                <button
+                  class="filter-tab"
+                  onclick="filterAssignments('pending')"
+                >
+                  Pending
+                </button>
+              </div>
+              <select
+                class="sort-select"
+                onchange="sortAssignments(this.value)"
+              >
+                <option value="dueDate">Sort by Due Date</option>
+                <option value="priority">Sort by Priority</option>
+                <option value="subject">Sort by Subject</option>
+              </select>
+            </div>
+
+            <div class="assignments-list" id="assignmentsList">
+              <div class="empty-state">
+                <div class="empty-state-icon">📝</div>
+                <p>No assignments yet. Add your first assignment above!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Dashboard -->
+        <div class="dashboard">
+          <!-- Statistics -->
+          <div class="card">
+            <h2 class="card-title">📊 Overview</h2>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">Total</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" id="completedCount">0</div>
+                <div class="stat-label">Completed</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" id="pendingCount">0</div>
+                <div class="stat-label">Pending</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" id="overdueCount">0</div>
+                <div class="stat-label">Overdue</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Suggestion -->
+          <div class="ai-suggestion" id="aiSuggestion">
+            <div class="ai-icon">🤖</div>
+            <div class="ai-title">AI Tip</div>
+            <div class="ai-text">
+              Add your first assignment to get personalized suggestions!
+            </div>
+          </div>
+
+          <!-- Upcoming Deadlines -->
+          <div class="card">
+            <h2 class="card-title">📅 Upcoming Deadlines</h2>
+            <div class="deadlines-list" id="deadlinesList">
+              <p style="color: #9ca3af; text-align: center">
+                No upcoming deadlines
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="Assignment.js"></script>
+    <script src="NavComponent.js"></script>
+  </body>
+</html>

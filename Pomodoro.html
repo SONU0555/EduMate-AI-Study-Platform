@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="Pomodoro.css" />
+    <link rel="stylesheet" href="NavComponent.css" />
+    <title>Pomodoro Focus Timer - AI Study Companion</title>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <!-- Logo -->
+        <a href="#" class="logo">
+          <span><span style="font-size: 2rem">AI</span> EduMate</span>
+        </a>
+
+        <!-- Desktop Navigation Menu -->
+        <ul class="nav-menu">
+          <li>
+            <a onclick="window.location.href='./index.html'">Dashboard</a>
+          </li>
+          <li><a href="./Assignment.html">Assignments</a></li>
+          <li><a class="active" href="./Pomodoro.html">Pomodoro Timer</a></li>
+          <li><a href="./CareerGuide.html">Career Guide</a></li>
+        </ul>
+
+        <!-- Auth Buttons (Desktop) -->
+        <div class="nav-auth">
+          <button
+            class="btn-login"
+            onclick="window.location.href='./LoginPage.html'"
+          >
+            Login
+          </button>
+          <button
+            class="btn-signup"
+            onclick="window.location.href='./SignupPage.html'"
+          >
+            Sign Up
+          </button>
+        </div>
+
+        <!-- Hamburger Menu Icon -->
+        <div class="hamburger" onclick="toggleMobileMenu()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <ul>
+        <li><a onclick="window.location.href='./index.html'">Dashboard</a></li>
+        <li>
+          <a href="./Assignment.html" onclick="closeMobileMenu()"
+            >Assignments</a
+          >
+        </li>
+        <li>
+          <a class="active" href="./Pomodoro.html" onclick="closeMobileMenu()"
+            >Pomodoro Timer</a
+          >
+        </li>
+        <li>
+          <a href="./CareerGuide.html" onclick="closeMobileMenu()"
+            >Career Guide</a
+          >
+        </li>
+      </ul>
+      <div class="mobile-auth">
+        <button
+          class="btn-login"
+          onclick="window.location.href='./LoginPage.html'"
+        >
+          Login
+        </button>
+        <button
+          class="btn-signup"
+          onclick="window.location.href='./SignupPage.html'"
+        >
+          Sign Up
+        </button>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1 class="page-title">⏰ Pomodoro Focus Timer</h1>
+        <p class="page-subtitle">
+          Boost your productivity with focused study sessions
+        </p>
+      </div>
+
+      <!-- Main Grid -->
+      <div class="main-grid">
+        <!-- Left Column - Stats -->
+        <div>
+          <div class="card stats-card">
+            <h2 class="card-title">📊 Today's Progress</h2>
+            <div class="stat-item">
+              <div class="stat-value" id="sessionsCompleted">0</div>
+              <div class="stat-label">Sessions Completed</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="totalMinutes">0</div>
+              <div class="stat-label">Focus Minutes</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="currentStreak">0</div>
+              <div class="stat-label">Current Streak 🔥</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center Column - Timer -->
+        <div>
+          <div class="card timer-section">
+            <!-- Session Type Selector -->
+            <div class="session-selector">
+              <button
+                class="session-btn active"
+                data-type="focus"
+                onclick="selectSession('focus')"
+              >
+                Focus Session
+              </button>
+              <button
+                class="session-btn"
+                data-type="short"
+                onclick="selectSession('short')"
+              >
+                Short Break
+              </button>
+              <button
+                class="session-btn"
+                data-type="long"
+                onclick="selectSession('long')"
+              >
+                Long Break
+              </button>
+            </div>
+
+            <!-- Task Input -->
+            <div class="task-section">
+              <input
+                type="text"
+                class="task-input"
+                placeholder="What are you working on?"
+                id="taskInput"
+              />
+            </div>
+
+            <!-- Circular Timer -->
+            <div class="timer-container">
+              <svg class="timer-circle" viewBox="0 0 320 320">
+                <defs>
+                  <linearGradient
+                    id="gradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop
+                      offset="0%"
+                      style="stop-color: #667eea; stop-opacity: 1"
+                    />
+                    <stop
+                      offset="100%"
+                      style="stop-color: #764ba2; stop-opacity: 1"
+                    />
+                  </linearGradient>
+                </defs>
+                <circle
+                  class="timer-circle-bg"
+                  cx="160"
+                  cy="160"
+                  r="150"
+                ></circle>
+                <circle
+                  class="timer-circle-progress"
+                  cx="160"
+                  cy="160"
+                  r="150"
+                  id="progressCircle"
+                  style="stroke-dasharray: 942.48; stroke-dashoffset: 942.48"
+                ></circle>
+              </svg>
+              <div class="timer-display">
+                <div class="timer-time" id="timerDisplay">25:00</div>
+                <div class="timer-label" id="timerLabel">Focus Session</div>
+              </div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="controls">
+              <button
+                class="control-btn btn-start"
+                id="startBtn"
+                onclick="startTimer()"
+              >
+                Start
+              </button>
+              <button
+                class="control-btn btn-pause"
+                id="pauseBtn"
+                onclick="pauseTimer()"
+                disabled
+              >
+                Pause
+              </button>
+              <button
+                class="control-btn btn-reset"
+                id="resetBtn"
+                onclick="resetTimer()"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Settings -->
+          <div class="card settings-section">
+            <h2 class="card-title">⚙️ Timer Settings</h2>
+            <div class="setting-item">
+              <span class="setting-label">Focus Duration</span>
+              <div class="setting-value">
+                <button
+                  class="setting-btn"
+                  onclick="adjustSetting('focus', -5)"
+                >
+                  -
+                </button>
+                <span class="setting-number" id="focusDuration">25</span>
+                <button class="setting-btn" onclick="adjustSetting('focus', 5)">
+                  +
+                </button>
+              </div>
+            </div>
+            <div class="setting-item">
+              <span class="setting-label">Short Break</span>
+              <div class="setting-value">
+                <button
+                  class="setting-btn"
+                  onclick="adjustSetting('short', -1)"
+                >
+                  -
+                </button>
+                <span class="setting-number" id="shortDuration">5</span>
+                <button class="setting-btn" onclick="adjustSetting('short', 1)">
+                  +
+                </button>
+              </div>
+            </div>
+            <div class="setting-item">
+              <span class="setting-label">Long Break</span>
+              <div class="setting-value">
+                <button class="setting-btn" onclick="adjustSetting('long', -5)">
+                  -
+                </button>
+                <span class="setting-number" id="longDuration">15</span>
+                <button class="setting-btn" onclick="adjustSetting('long', 5)">
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Motivation -->
+        <div>
+          <div class="card motivation-card">
+            <div class="quote-icon">💡</div>
+            <p class="quote-text" id="motivationQuote">
+              Stay focused — small steps lead to big changes
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="NavComponent.js"></script>
+    <script src="Pomodoro.js"></script>
+  </body>
+</html>

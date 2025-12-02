@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="SignupPage.css" />
+    <title>Sign Up - AI Study Companion</title>
+  </head>
+  <body>
+    <div class="signup-container">
+      <button
+        class="close-button"
+        id="closeButton"
+        title="Close Page"
+        onclick="closeSignup()"
+      >
+        <span class="close-icon"></span>
+      </button>
+      <!-- Logo Section -->
+      <div class="logo-section">
+        <!-- <div class="logo-icon">🤖</div> -->
+        <h1 class="logo-title">Create Account</h1>
+        <p class="logo-subtitle">Join AI Study Companion today</p>
+      </div>
+
+      <!-- Success Message -->
+      <div class="success-message" id="successMessage">
+        ✓ Account created successfully! Redirecting...
+      </div>
+
+      <!-- Sign Up Form -->
+      <form id="signupForm" novalidate>
+        <!-- Name Fields -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              placeholder="John"
+              autocomplete="given-name"
+            />
+            <div class="error-message" id="firstNameError">
+              First name is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              placeholder="Doe"
+              autocomplete="family-name"
+            />
+            <div class="error-message" id="lastNameError">
+              Last name is required
+            </div>
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="john.doe@example.com"
+            autocomplete="email"
+          />
+          <div class="error-message" id="emailError">
+            Please enter a valid email address
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Create a strong password"
+              autocomplete="new-password"
+            />
+            <span class="password-toggle" id="passwordToggle">👁️</span>
+          </div>
+          <div class="password-strength" id="passwordStrength">
+            <div class="password-strength-bar" id="passwordStrengthBar"></div>
+          </div>
+          <div class="password-hint" id="passwordHint">
+            Password must be at least 8 characters
+          </div>
+          <div class="error-message" id="passwordError">
+            Password is required
+          </div>
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="Re-enter your password"
+              autocomplete="new-password"
+            />
+            <span class="password-toggle" id="confirmPasswordToggle">👁️</span>
+          </div>
+          <div class="error-message" id="confirmPasswordError">
+            Passwords do not match
+          </div>
+        </div>
+
+        <!-- Terms Checkbox -->
+        <div class="checkbox-group">
+          <input type="checkbox" id="terms" name="terms" />
+          <label for="terms">
+            I agree to the <a href="#terms">Terms of Service</a> and
+            <a href="#privacy">Privacy Policy</a>
+          </label>
+        </div>
+
+        <!-- Sign Up Button -->
+        <button type="submit" class="btn-signup" id="signupBtn">
+          <span class="btn-text">Create Account</span>
+          <div class="spinner"></div>
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <!-- Login Link -->
+      <div class="login-link">
+        Already have an account? <a href="./LoginPage.html">Login</a>
+      </div>
+    </div>
+
+    <script src="SignupPage.js"></script>
+  </body>
+</html>

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer</title>
+</head>
+<body>
+    <style>
+               * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            /* margin-top: 80px; */
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+                /* Session Type Selector */
+        .session-selector {
+            display: flex;
+            background: #f3f4f6;
+            border-radius: 16px;
+            padding: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .session-btn {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: transparent;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .session-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+               /* Timer Section */
+        .timer-section {
+            text-align: center;
+        }
+
+        .timer-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 2rem;
+        }
+
+        .timer-circle {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .timer-circle-bg {
+            fill: none;
+            stroke: #e5e7eb;
+            stroke-width: 12;
+        }
+
+        .timer-circle-progress {
+            fill: none;
+            stroke: url(#gradient);
+            stroke-width: 12;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .timer-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .timer-time {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .timer-label {
+            font-size: 1rem;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        /* Control Buttons */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .control-btn {
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-pause {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .btn-pause:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-reset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Progress Stats */
+        .stats-card {
+            margin-bottom: 2rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+
+        /* Task Input */
+        .task-section {
+            margin-bottom: 2rem;
+        }
+
+        .task-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .task-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Settings */
+        .settings-section {
+            margin-top: 2rem;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .setting-label {
+            font-size: 0.9rem;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .setting-value {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .setting-btn {
+            width: 32px;
+            height: 32px;
+            border: 2px solid #667eea;
+            background: white;
+            border-radius: 8px;
+            font-weight: 700;
+            color: #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .setting-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .setting-number {
+            min-width: 50px;
+            text-align: center;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+                /* Responsive Design */
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .timer-container {
+                width: 280px;
+                height: 280px;
+            }
+
+            .timer-time {
+                font-size: 3rem;
+            }
+
+            .controls {
+                flex-wrap: wrap;
+            }
+
+            .control-btn {
+                padding: 0.875rem 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .timer-container {
+                width: 240px;
+                height: 240px;
+            }
+
+            .timer-time {
+                font-size: 2.5rem;
+            }
+
+            .control-btn {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .timer-time.pulse {
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+    </style>
+
+         <div class="container">
+                <div class="card timer-section">
+                    <!-- Session Type Selector -->
+                    <div class="session-selector">
+                        <button class="session-btn active" data-type="focus" onclick="selectSession('focus')">
+                            Focus Session
+                        </button>
+                        <button class="session-btn" data-type="short" onclick="selectSession('short')">
+                            Short Break
+                        </button>
+                        <button class="session-btn" data-type="long" onclick="selectSession('long')">
+                            Long Break
+                        </button>
+                    </div>
+
+                    <!-- Task Input -->
+                    <div class="task-section">
+                        <input 
+                            type="text" 
+                            class="task-input" 
+                            placeholder="What are you working on?"
+                            id="taskInput"
+                        >
+                    </div>
+
+                    <!-- Circular Timer -->
+                    <div class="timer-container">
+                        <svg class="timer-circle" viewBox="0 0 320 320">
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="timer-circle-bg" cx="160" cy="160" r="150"></circle>
+                            <circle class="timer-circle-progress" cx="160" cy="160" r="150" 
+                                    id="progressCircle"
+                                    style="stroke-dasharray: 942.48; stroke-dashoffset: 942.48;">
+                            </circle>
+                        </svg>
+                        <div class="timer-display">
+                            <div class="timer-time" id="timerDisplay">25:00</div>
+                            <div class="timer-label" id="timerLabel">Focus Session</div>
+                        </div>
+                    </div>
+
+                    <!-- Control Buttons -->
+                    <div class="controls">
+                        <button class="control-btn btn-start" id="startBtn" onclick="startTimer()">Start</button>
+                        <button class="control-btn btn-pause" id="pauseBtn" onclick="pauseTimer()" disabled>Pause</button>
+                        <button class="control-btn btn-reset" id="resetBtn" onclick="resetTimer()">Reset</button>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="card settings-section">
+                    <h2 class="card-title">⚙️ Timer Settings</h2>
+                    <div class="setting-item">
+                        <span class="setting-label">Focus Duration</span>
+                        <div class="setting-value">
+                            <button class="setting-btn" onclick="adjustSetting('focus', -5)">-</button>
+                            <span class="setting-number" id="focusDuration">25</span>
+                            <button class="setting-btn" onclick="adjustSetting('focus', 5)">+</button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label">Short Break</span>
+                        <div class="setting-value">
+                            <button class="setting-btn" onclick="adjustSetting('short', -1)">-</button>
+                            <span class="setting-number" id="shortDuration">5</span>
+                            <button class="setting-btn" onclick="adjustSetting('short', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <span class="setting-label">Long Break</span>
+                        <div class="setting-value">
+                            <button class="setting-btn" onclick="adjustSetting('long', -5)">-</button>
+                            <span class="setting-number" id="longDuration">15</span>
+                            <button class="setting-btn" onclick="adjustSetting('long', 5)">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+
+                        // Timer state
+        let currentSession = 'focus';
+        let timeLeft = 25 * 60; // 25 minutes in seconds
+        let totalTime = 25 * 60;
+        let timerInterval = null;
+        let isRunning = false;
+
+        // Settings
+        const settings = {
+            focus: 25,
+            short: 5,
+            long: 15
+        };
+                        // Circle progress
+        const circle = document.getElementById('progressCircle');
+        const circumference = 2 * Math.PI * 150;
+
+        // Select session type
+        function selectSession(type) {
+            if (isRunning) return;
+            
+            currentSession = type;
+            
+            // Update UI
+            document.querySelectorAll('.session-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('active');
+            
+            // Update timer
+            const labels = {
+                focus: 'Focus Session',
+                short: 'Short Break',
+                long: 'Long Break'
+            };
+            
+            timeLeft = settings[type] * 60;
+            totalTime = timeLeft;
+            
+            document.getElementById('timerLabel').textContent = labels[type];
+            updateDisplay();
+            updateCircle();
+        }
+
+        // Update timer display
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Update circular progress
+        function updateCircle() {
+            const progress = (timeLeft / totalTime);
+            const offset = circumference * (1 - progress);
+            circle.style.strokeDashoffset = offset;
+        }
+
+        // Start timer
+        function startTimer() {
+            if (isRunning) return;
+            
+            isRunning = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('pauseBtn').disabled = false;
+            document.getElementById('timerDisplay').classList.add('pulse');
+            
+            timerInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateDisplay();
+                    updateCircle();
+                } else {
+                    completeSession();
+                }
+            }, 1000);
+        }
+
+        // Pause timer
+        function pauseTimer() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+            document.getElementById('timerDisplay').classList.remove('pulse');
+        }
+
+        // Reset timer
+        function resetTimer() {
+            pauseTimer();
+            timeLeft = settings[currentSession] * 60;
+            totalTime = timeLeft;
+            updateDisplay();
+            updateCircle();
+        }
+
+        // Complete session
+        function completeSession() {
+            pauseTimer();
+            
+            // Update stats
+            if (currentSession === 'focus') {
+                // Play completion sound (visual feedback)
+                alert('🎉 Focus session completed! Great work!\n\nTime for a break.');
+            }
+            // Reset timer
+            resetTimer();
+        }
+
+                // Adjust settings
+        function adjustSetting(type, amount) {
+            if (isRunning) return;
+            
+            settings[type] = Math.max(1, settings[type] + amount);
+            document.getElementById(`${type}Duration`).textContent = settings[type];
+            
+            if (currentSession === type) {
+                timeLeft = settings[type] * 60;
+                totalTime = timeLeft;
+                updateDisplay();
+                updateCircle();
+            }
+        }
+
+        // Initialize
+        updateDisplay();
+        updateCircle();
+
+        window.onload = resetTimer();
+            </script>
+    
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="LoginPage.css" />
+    <title>Login - AI Study Companion</title>
+  </head>
+  <body>
+    <div class="login-container">
+      <button
+        class="close-button"
+        id="closeButton"
+        title="Close Page"
+        onclick="closeLogin()"
+      >
+        <span class="close-icon"></span>
+      </button>
+      <!-- Logo Section -->
+      <div class="logo-section">
+        <h1 class="logo-title">Welcome Back</h1>
+        <p class="logo-subtitle">Login to your AI Study Companion</p>
+      </div>
+
+      <!-- Success Message -->
+      <div class="success-message" id="successMessage">
+        ✓ Login successful! Redirecting...
+      </div>
+
+      <!-- Login Form -->
+      <form id="loginForm" novalidate>
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            autocomplete="email"
+          />
+          <div class="error-message" id="emailError">
+            Please enter a valid email address
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-wrapper">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+            />
+            <span class="password-toggle" id="passwordToggle">👁️</span>
+          </div>
+          <div class="error-message" id="passwordError">
+            Password must be at least 6 characters
+          </div>
+        </div>
+
+        <!-- Forgot Password -->
+        <div class="forgot-password">
+          <a href="#forgot" id="forgotPasswordLink">Forgot Password?</a>
+        </div>
+
+        <!-- Login Button -->
+        <button type="submit" class="btn-login" id="loginBtn">
+          <span class="btn-text">Login</span>
+          <div class="spinner"></div>
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <!-- Sign Up Link -->
+      <div class="signup-link">
+        Don't have an account? <a href="../HTML/SignupPage.html">Sign Up</a>
+      </div>
+    </div>
+
+    <script src="LoginPage.js"></script>
+  </body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Study Companion - Home</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="NavComponent.css" />
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <!-- Logo -->
+        <a href="#" class="logo">
+          <span><span style="font-size: 2rem">AI</span> EduMate</span>
+        </a>
+
+        <!-- Desktop Navigation Menu -->
+        <ul class="nav-menu">
+          <li>
+            <a class="active" onclick="window.location.href='./index.html'"
+              >Dashboard</a
+            >
+          </li>
+          <li><a href="./Assignment.html">Assignments</a></li>
+          <li><a href="./Pomodoro.html">Pomodoro Timer</a></li>
+          <li><a href="./CareerGuide.html">Career Guide</a></li>
+        </ul>
+
+        <!-- Auth Buttons (Desktop) -->
+        <div class="nav-auth">
+          <button
+            class="btn-login"
+            onclick="window.location.href='./LoginPage.html'"
+          >
+            Login
+          </button>
+          <button
+            class="btn-signup"
+            onclick="window.location.href='./SignupPage.html'"
+          >
+            Sign Up
+          </button>
+        </div>
+
+        <!-- Hamburger Menu Icon -->
+        <div class="hamburger" onclick="toggleMobileMenu()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <ul>
+        <li>
+          <a href="./index.html" class="active" onclick="closeMobileMenu()"
+            >Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="./Assignment.html" onclick="closeMobileMenu()"
+            >Assignments</a
+          >
+        </li>
+        <li>
+          <a href="./Pomodoro.html" onclick="closeMobileMenu()"
+            >Pomodoro Timer</a
+          >
+        </li>
+        <li>
+          <a href="./CareerGuide.html" onclick="closeMobileMenu()"
+            >Career Guide</a
+          >
+        </li>
+      </ul>
+      <div class="mobile-auth">
+        <button
+          class="btn-login"
+          onclick="window.location.href='./LoginPage.html'"
+        >
+          Login
+        </button>
+        <button
+          class="btn-signup"
+          onclick="window.location.href='./SignupPage.html'"
+        >
+          Sign Up
+        </button>
+      </div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="header">
+      <div class="header-content">
+        <div class="welcome-section">
+          <h1 class="greeting">👋 Hello! Welcome to Your AI Study Companion</h1>
+          <p class="tagline">Your personal AI-powered productivity assistant</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Quick Actions Strip -->
+    <div class="quick-actions">
+      <div class="container">
+        <button class="quick-btn" onclick="window.location.href='./Timer.html'">
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          Start Timer
+        </button>
+        <button
+          class="quick-btn"
+          onclick="window.location.href='./TodayPlan.html'"
+        >
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          Today's Plan
+        </button>
+        <button
+          class="quick-btn"
+          onclick="window.location.href='./AddAssignment.html'"
+        >
+          <svg
+            class="icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          Add Assignment
+        </button>
+      </div>
+    </div>
+
+    <!-- Feature Tiles Section -->
+    <main class="main-content">
+      <div class="container">
+        <div class="features-grid">
+          <!-- Card 1: AI Study Planner -->
+          <div class="feature-card gradient-purple">
+            <div class="card-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+            </div>
+            <h3 class="card-title">AI Study Planner</h3>
+            <p class="card-description">
+              Create your personalized daily study schedule.
+            </p>
+            <button
+              class="card-btn"
+              onclick="window.location.href='./Planner.html'"
+            >
+              Open
+              <svg
+                class="arrow"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Card 2: Notes Summarizer -->
+          <div class="feature-card gradient-blue">
+            <div class="card-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+              </svg>
+            </div>
+            <h3 class="card-title">Notes Summarizer</h3>
+            <p class="card-description">
+              Upload your notes and get crisp summaries.
+            </p>
+            <button
+              class="card-btn"
+              onclick="window.location.href='./NoteSummariser.html'"
+            >
+              Open
+              <svg
+                class="arrow"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Card 3: Pomodoro Timer -->
+          <div class="feature-card gradient-red">
+            <div class="card-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            </div>
+            <h3 class="card-title">Pomodoro Focus Timer</h3>
+            <p class="card-description">
+              Boost your productivity with timed focus sessions.
+            </p>
+            <button
+              class="card-btn"
+              onclick="window.location.href='./Pomodoro.html'"
+            >
+              Open
+              <svg
+                class="arrow"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Card 4: Assignment Tracker -->
+          <div class="feature-card gradient-green">
+            <div class="card-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <polyline points="9 11 12 14 22 4" />
+                <path
+                  d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"
+                />
+              </svg>
+            </div>
+            <h3 class="card-title">Assignment Tracker</h3>
+            <p class="card-description">Track deadlines and stay organized.</p>
+            <button
+              class="card-btn"
+              onclick="window.location.href='./Assignment.html'"
+            >
+              Open
+              <svg
+                class="arrow"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Card 5: Career Suggestions -->
+          <div class="feature-card gradient-orange">
+            <div class="card-icon">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="12" cy="12" r="6" />
+                <circle cx="12" cy="12" r="2" />
+              </svg>
+            </div>
+            <h3 class="card-title">Career Suggestions (AI)</h3>
+            <p class="card-description">
+              Find careers that match your interests.
+            </p>
+            <button
+              class="card-btn"
+              onclick="window.location.href='./CareerGuide.html'"
+            >
+              Open
+              <svg
+                class="arrow"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Motivational Banner -->
+    <div class="motivation-banner">
+      <div class="container">
+        <div class="motivation-content">
+          <p class="motivation-quote">
+            "One step at a time. Your consistency decides your success."
+          </p>
+          <div class="motivation-tags">
+            <span class="tag">🔥 Daily Motivation</span>
+            <span class="tag">🎯 Productivity Stats</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p class="copyright">© 2025 AI Study Companion</p>
+        <nav class="footer-links">
+          <a href="#about">About</a>
+          <span class="separator">•</span>
+          <a href="#contact">Contact</a>
+          <span class="separator">•</span>
+          <a href="#privacy">Privacy Policy</a>
+          <span class="separator">•</span>
+          <a href="#terms">Terms</a>
+          <span class="separator">•</span>
+          <a href="https://github.com" target="_blank">GitHub</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="NavComponent.js"></script>
+  </body>
+</html>

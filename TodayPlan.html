@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Today's Plan - AI Study Companion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 0.5rem;
+        }
+
+        .date-display {
+            font-size: 1.125rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+        }
+
+        /* Main Grid Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Next Task Highlight */
+        .next-task-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .next-task-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .next-task-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .next-task-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .next-task-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .next-task-meta {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            opacity: 0.95;
+        }
+
+        .btn-start {
+            padding: 0.875rem 2rem;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Task List */
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .task-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+            display: flex;
+            gap: 1rem;
+            align-items: start;
+        }
+
+        .task-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .task-card.completed {
+            opacity: 0.6;
+            background: #f9fafb;
+        }
+
+        .task-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: #667eea;
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.75rem;
+            gap: 1rem;
+        }
+
+        .task-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .task-card.completed .task-title {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+
+        .priority-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        .priority-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .priority-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .priority-low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.75rem;
+        }
+
+        .task-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .subject-badge {
+            padding: 0.25rem 0.75rem;
+            background: #dbeafe;
+            color: #1e40af;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.75rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* Daily Progress Section */
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .progress-item {
+            text-align: center;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border-radius: 16px;
+        }
+
+        .progress-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        /* AI Suggestions */
+        .ai-suggestions {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+        }
+
+        .suggestion-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .suggestion-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #78350f;
+            margin-bottom: 0.5rem;
+        }
+
+        .suggestion-text {
+            font-size: 0.95rem;
+            color: #92400e;
+            line-height: 1.6;
+        }
+
+        /* Overall Progress Circle */
+        .progress-circle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-circle {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin-bottom: 1rem;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: #e5e7eb;
+            stroke-width: 12;
+        }
+
+        .circle-progress {
+            fill: none;
+            stroke: url(#gradient);
+            stroke-width: 12;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: center;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .circle-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .circle-percentage {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .circle-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        /* Adjust Plan Button */
+        .btn-adjust {
+            width: 100%;
+            padding: 1.125rem;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-adjust:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Motivation Quote */
+        .motivation-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .motivation-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .motivation-text {
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .next-task-title {
+                font-size: 1.5rem;
+            }
+
+            .task-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="page-title">📅 Today's Plan</h1>
+            <p class="date-display" id="dateDisplay"></p>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Left Column - Tasks -->
+            <div>
+                <!-- Next Task Highlight -->
+                <div class="card next-task-card">
+                    <div class="next-task-content">
+                        <div class="next-task-label">⭐ Next Task</div>
+                        <h2 class="next-task-title">Mathematics – Chapter 5 Practice</h2>
+                        <div class="next-task-meta">
+                            <div class="meta-item">
+                                📚 <span>Mathematics</span>
+                            </div>
+                            <div class="meta-item">
+                                ⏱️ <span>25 mins</span>
+                            </div>
+                            <div class="meta-item">
+                                🎯 <span>High Priority</span>
+                            </div>
+                        </div>
+                        <button class="btn-start" onclick="startTask()">▶️ Start Now</button>
+                    </div>
+                </div>
+
+                <!-- Today's Tasks -->
+                <div class="card">
+                    <h2 class="card-title">📋 Today's Schedule</h2>
+                    <div class="tasks-list" id="tasksList">
+                        <!-- Tasks will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Adjust Plan Button -->
+                <button class="btn-adjust" onclick="adjustPlan()">
+                    🤖 Adjust Today's Plan
+                </button>
+            </div>
+
+            <!-- Right Column - Progress & Suggestions -->
+            <div>
+                <!-- Daily Progress Circle -->
+                <div class="card">
+                    <h2 class="card-title">📊 Daily Progress</h2>
+                    <div class="progress-circle-container">
+                        <div class="progress-circle">
+                            <svg width="150" height="150">
+                                <defs>
+                                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#667eea" />
+                                        <stop offset="100%" style="stop-color:#764ba2" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="circle-bg" cx="75" cy="75" r="65" />
+                                <circle class="circle-progress" cx="75" cy="75" r="65" 
+                                        id="progressCircle"
+                                        style="stroke-dasharray: 408.4; stroke-dashoffset: 306.3;" />
+                            </svg>
+                            <div class="circle-text">
+                                <div class="circle-percentage" id="progressPercentage">25%</div>
+                                <div class="circle-label">Completed</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="progress-grid">
+                        <div class="progress-item">
+                            <div class="progress-value" id="studyTime">45</div>
+                            <div class="progress-label">Study Minutes</div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-value" id="completedTasks">2</div>
+                            <div class="progress-label">Tasks Done</div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-value" id="pomodoroCount">1</div>
+                            <div class="progress-label">Pomodoros</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Suggestions -->
+                <div class="ai-suggestions">
+                    <div class="suggestion-icon">💡</div>
+                    <div class="suggestion-title">AI Suggestion</div>
+                    <div class="suggestion-text" id="aiSuggestion">
+                        Finish Science early, it's due tomorrow! Focus on high-priority tasks first.
+                    </div>
+                </div>
+
+                <!-- Motivation -->
+                <div class="motivation-box">
+                    <div class="motivation-icon">🌟</div>
+                    <div class="motivation-text">
+                        "Success is the sum of small efforts repeated day in and day out."
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample tasks data
+        const tasks = [
+            { id: 1, title: 'Mathematics – Chapter 5 Practice', subject: 'Mathematics', time: 25, priority: 'high', completed: false, progress: 0 },
+            { id: 2, title: 'Physics – Newton\'s Laws Review', subject: 'Physics', time: 30, priority: 'high', completed: false, progress: 0 },
+            { id: 3, title: 'English – Essay Outline', subject: 'English', time: 20, priority: 'medium', completed: false, progress: 0 },
+            { id: 4, title: 'Chemistry – Lab Report', subject: 'Chemistry', time: 40, priority: 'medium', completed: false, progress: 0 },
+            { id: 5, title: 'History – Chapter Reading', subject: 'History', time: 15, priority: 'low', completed: false, progress: 0 }
+        ];
+
+        let completedCount = 2;
+        let totalStudyTime = 45;
+        let pomodoroSessions = 1;
+
+        // Display current date
+        function displayDate() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const today = new Date();
+            document.getElementById('dateDisplay').textContent = today.toLocaleDateString('en-US', options);
+        }
+
+        // Render tasks
+        function renderTasks() {
+            const tasksList = document.getElementById('tasksList');
+            tasksList.innerHTML = tasks.map(task => `
+                <div class="task-card ${task.completed ? 'completed' : ''}">
+                    <input type="checkbox" class="task-checkbox" 
+                           ${task.completed ? 'checked' : ''}
+                           onchange="toggleTask(${task.id})">
+                    <div class="task-content">
+                        <div class="task-header">
+                            <div class="task-title">${task.title}</div>
+                            <div class="priority-badge priority-${task.priority}">
+                                ${task.priority}
+                            </div>
+                        </div>
+                        <div class="task-meta">
+                            <div class="subject-badge">${task.subject}</div>
+                            <div class="task-meta-item">
+                                ⏱️ ${task.time} mins
+                            </div>
+                        </div>
+                        ${task.progress > 0 ? `
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${task.progress}%"></div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Toggle task completion
+        function toggleTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            task.completed = !task.completed;
+            
+            if (task.completed) {
+                completedCount++;
+                totalStudyTime += task.time;
+                pomodoroSessions++;
+            } else {
+                completedCount--;
+                totalStudyTime -= task.time;
+                pomodoroSessions--;
+            }
+            
+            renderTasks();
+            updateProgress();
+        }
+
+        // Update progress
+        function updateProgress() {
+            const completedTasks = tasks.filter(t => t.completed).length;
+            const percentage = Math.round((completedTasks / tasks.length) * 100);
+            
+            // Update circle
+            const circumference = 2 * Math.PI * 65;
+            const offset = circumference - (percentage / 100) * circumference;
+            document.getElementById('progressCircle').style.strokeDashoffset = offset;
+            document.getElementById('progressPercentage').textContent = percentage + '%';
+            
+            // Update stats
+            document.getElementById('studyTime').textContent = totalStudyTime;
+            document.getElementById('completedTasks').textContent = completedCount;
+            document.getElementById('pomodoroCount').textContent = pomodoroSessions;
+            
+            // Update AI suggestion
+            updateAISuggestion();
+        }
+
+        // Update AI suggestion
+        function updateAISuggestion() {
+            const suggestions = [
+                "Great progress! Take a 5-minute break before your next task.",
+                "You're doing amazing! Keep up the momentum.",
+                "Focus on high-priority tasks first for maximum efficiency.",
+                "Finish Science early, it's due tomorrow!",
+                "Consider using Pomodoro technique for better focus."
+            ];
+            
+            const completedTasks = tasks.filter(t => t.completed).length;
+            const percentage = Math.round((completedTasks / tasks.length) * 100);
+            
+            let suggestion;
+            if (percentage >= 75) {
+                suggestion = "Excellent work! You're almost done for the day. 🎉";
+            } else if (percentage >= 50) {
+                suggestion = suggestions[0];
+            } else {
+                suggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+            }
+            
+            document.getElementById('aiSuggestion').textContent = suggestion;
+        }
+
+        // Start task
+        function startTask() {
+            alert('Starting Mathematics task!\n\nThis will open the Pomodoro timer and track your progress.');
+        }
+
+        // Adjust plan
+        function adjustPlan() {
+            alert('AI is reshuffling your tasks based on:\n\n• Available time\n• Task priorities\n• Due dates\n• Your energy levels\n\nOptimized plan will be generated!');
+        }
+
+        // Initialize
+        displayDate();
+        renderTasks();
+        updateProgress();
+    </script>
+</body>
+</html>

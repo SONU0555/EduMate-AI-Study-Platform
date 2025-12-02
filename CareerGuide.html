@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="NavComponent.css" />
+    <title>AI Career Guide - AI Study Companion</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 50%,
+          #f093fb 100%
+        );
+        min-height: 100vh;
+        padding: 2rem 1rem;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 100px;
+        margin-top: 80px;
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .page-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: white;
+        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        margin-bottom: 0.5rem;
+      }
+
+      .page-intro {
+        font-size: 1.125rem;
+        color: rgba(255, 255, 255, 0.95);
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+
+      /* Card Styles */
+      .card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        margin-bottom: 2rem;
+      }
+
+      .card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      /* Input Form */
+      .form-section {
+        margin-bottom: 2rem;
+      }
+
+      .form-label {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      /* Subject Chips */
+      .subjects-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .subject-chip {
+        padding: 0.75rem 1.25rem;
+        border: 2px solid #e5e7eb;
+        background: white;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        user-select: none;
+      }
+
+      .subject-chip:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+      }
+
+      .subject-chip.selected {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+
+      /* Skill Sliders */
+      .skill-item {
+        margin-bottom: 1.5rem;
+      }
+
+      .skill-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+      }
+
+      .skill-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .skill-value {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #667eea;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        height: 8px;
+        border-radius: 5px;
+        background: #e5e7eb;
+        outline: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+      }
+
+      /* Text Inputs */
+      textarea,
+      select {
+        width: 100%;
+        padding: 0.875rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+      }
+
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      /* Submit Button */
+      .btn-submit {
+        width: 100%;
+        padding: 1.25rem;
+        border: none;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-size: 1.125rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+      }
+
+      .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-submit:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* Loading Spinner */
+      .spinner {
+        display: none;
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 2rem auto;
+      }
+
+      .spinner.show {
+        display: block;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Results Section */
+      .results-section {
+        display: none;
+      }
+
+      .results-section.show {
+        display: block;
+      }
+
+      .results-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .results-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.5rem;
+      }
+
+      .results-subtitle {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.125rem;
+      }
+
+      /* Career Cards */
+      .careers-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .career-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+      }
+
+      .career-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        border-color: #667eea;
+      }
+
+      .career-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      .career-name {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #1f2937;
+        margin-bottom: 0.75rem;
+      }
+
+      .career-description {
+        color: #6b7280;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1.25rem;
+      }
+
+      .career-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .detail-item {
+        display: flex;
+        align-items: start;
+        gap: 0.5rem;
+      }
+
+      .detail-label {
+        font-weight: 700;
+        color: #374151;
+        min-width: 100px;
+      }
+
+      .detail-value {
+        color: #6b7280;
+        flex: 1;
+      }
+
+      .match-section {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-top: 1rem;
+      }
+
+      .match-title {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #1e40af;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .match-text {
+        font-size: 0.875rem;
+        color: #3730a3;
+        line-height: 1.5;
+      }
+
+      .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .skill-tag {
+        padding: 0.375rem 0.75rem;
+        background: #dbeafe;
+        color: #1e40af;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      /* Strength Profile Sidebar */
+      .sidebar {
+        position: sticky;
+        top: 2rem;
+      }
+
+      .strength-item {
+        margin-bottom: 1.5rem;
+      }
+
+      .strength-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+
+      .strength-name {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .strength-score {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #667eea;
+      }
+
+      .strength-bar {
+        height: 12px;
+        background: #e5e7eb;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+
+      .strength-fill {
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 6px;
+        transition: width 1s ease;
+      }
+
+      /* Layout Grid */
+      .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 2rem;
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .container {
+          margin: 0 50px;
+        }
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .careers-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          position: static;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          margin: 80px auto 0;
+        }
+        .page-title {
+          font-size: 2rem;
+        }
+
+        .card {
+          padding: 1.5rem;
+        }
+
+        .career-card {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <!-- Logo -->
+        <a href="#" class="logo">
+          <span><span style="font-size: 2rem">AI</span> EduMate</span>
+        </a>
+
+        <!-- Desktop Navigation Menu -->
+        <ul class="nav-menu">
+          <li>
+            <a onclick="window.location.href='./index.html'">Dashboard</a>
+          </li>
+          <li><a href="./Assignment.html">Assignments</a></li>
+          <li><a href="./Pomodoro.html">Pomodoro Timer</a></li>
+          <li><a class="active" href="./CareerGuide.html">Career Guide</a></li>
+        </ul>
+
+        <!-- Auth Buttons (Desktop) -->
+        <div class="nav-auth">
+          <button
+            class="btn-login"
+            onclick="window.location.href='./LoginPage.html'"
+          >
+            Login
+          </button>
+          <button
+            class="btn-signup"
+            onclick="window.location.href='./SignupPage.html'"
+          >
+            Sign Up
+          </button>
+        </div>
+
+        <!-- Hamburger Menu Icon -->
+        <div class="hamburger" onclick="toggleMobileMenu()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <ul>
+        <li><a onclick="window.location.href='./index.html'">Dashboard</a></li>
+        <li>
+          <a href="./Assignment.html" onclick="closeMobileMenu()"
+            >Assignments</a
+          >
+        </li>
+        <li>
+          <a href="./Pomodoro.html" onclick="closeMobileMenu()"
+            >Pomodoro Timer</a
+          >
+        </li>
+        <li>
+          <a
+            class="active"
+            href="./CareerGuide.html"
+            onclick="closeMobileMenu()"
+            >Career Guide</a
+          >
+        </li>
+      </ul>
+      <div class="mobile-auth">
+        <button
+          class="btn-login"
+          onclick="window.location.href='./LoginPage.html'"
+        >
+          Login
+        </button>
+        <button
+          class="btn-signup"
+          onclick="window.location.href='./SignupPage.html'"
+        >
+          Sign Up
+        </button>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1 class="page-title">🎯 AI Career Guide</h1>
+        <p class="page-intro">
+          Tell us about your interests and let AI recommend the best career
+          paths for you
+        </p>
+      </div>
+
+      <!-- Input Form -->
+      <div id="inputSection">
+        <div class="card">
+          <h2 class="card-title">📝 Tell Us About Yourself</h2>
+
+          <!-- Favorite Subjects -->
+          <div class="form-section">
+            <label class="form-label">Choose your favorite subjects:</label>
+            <div class="subjects-grid" id="subjectsGrid"></div>
+          </div>
+
+          <!-- Skills Rating -->
+          <div class="form-section">
+            <label class="form-label">Rate your skills:</label>
+            <div id="skillsContainer"></div>
+          </div>
+
+          <!-- Hobbies -->
+          <div class="form-section">
+            <label class="form-label">Enter your hobbies/interests:</label>
+            <textarea
+              id="hobbies"
+              placeholder="e.g., Reading, Coding, Drawing, Sports, Music..."
+            ></textarea>
+          </div>
+
+          <!-- Study Goal -->
+          <div class="form-section">
+            <label class="form-label">Future study goal:</label>
+            <select id="studyGoal">
+              <option value="">Select your field of interest</option>
+              <option value="engineering">Engineering</option>
+              <option value="medical">Medical</option>
+              <option value="arts">Arts & Humanities</option>
+              <option value="commerce">Commerce & Business</option>
+              <option value="it">Information Technology</option>
+              <option value="design">Design & Creative</option>
+              <option value="science">Pure Sciences</option>
+              <option value="law">Law & Legal Studies</option>
+              <option value="social">Social Sciences</option>
+            </select>
+          </div>
+
+          <!-- Submit Button -->
+          <button class="btn-submit" onclick="generateCareerSuggestions()">
+            ✨ Get Career Suggestions
+          </button>
+
+          <div class="spinner" id="loadingSpinner"></div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div id="resultsSection" class="results-section">
+        <div class="results-header">
+          <h2 class="results-title">🌟 Your Personalized Career Matches</h2>
+          <p class="results-subtitle">Based on your interests and strengths</p>
+        </div>
+
+        <div class="main-grid">
+          <!-- Career Cards -->
+          <div>
+            <div class="careers-grid" id="careersGrid"></div>
+          </div>
+
+          <!-- Strength Profile Sidebar -->
+          <div class="sidebar">
+            <div class="card">
+              <h2 class="card-title">📊 Career Strength Profile</h2>
+              <div id="strengthProfile"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Data
+      const subjects = [
+        "Mathematics",
+        "Physics",
+        "Chemistry",
+        "Biology",
+        "Computer Science",
+        "English",
+        "History",
+        "Geography",
+        "Economics",
+        "Psychology",
+        "Art",
+        "Music",
+        "Business Studies",
+        "Physical Education",
+      ];
+
+      const skills = [
+        { name: "Creativity", id: "creativity" },
+        { name: "Logic & Problem Solving", id: "logic" },
+        { name: "Communication", id: "communication" },
+        { name: "Tech Skills", id: "tech" },
+        { name: "Leadership", id: "leadership" },
+      ];
+
+      const careerDatabase = {
+        engineering: [
+          {
+            name: "Software Engineer",
+            icon: "💻",
+            description:
+              "Design, develop, and maintain software applications and systems.",
+            skills: ["Programming", "Problem Solving", "Logic"],
+            salary: "$80,000 - $150,000/year",
+            education: "Bachelor's in Computer Science or related field",
+            matchReason:
+              "Your strong tech and logic skills combined with interest in Computer Science make this an excellent fit.",
+          },
+          {
+            name: "Data Scientist",
+            icon: "📊",
+            description:
+              "Analyze complex data to help organizations make better decisions.",
+            skills: ["Statistics", "Programming", "Analysis"],
+            salary: "$90,000 - $160,000/year",
+            education:
+              "Bachelor's/Master's in Data Science, Statistics, or Computer Science",
+            matchReason:
+              "Your analytical thinking and mathematical abilities align perfectly with data science requirements.",
+          },
+        ],
+        medical: [
+          {
+            name: "Medical Doctor",
+            icon: "⚕️",
+            description:
+              "Diagnose and treat illnesses, injuries, and other health conditions.",
+            skills: ["Biology", "Communication", "Empathy"],
+            salary: "$150,000 - $300,000/year",
+            education: "Medical degree (MBBS/MD) + Residency",
+            matchReason:
+              "Your interest in Biology and strong communication skills are essential for a medical career.",
+          },
+        ],
+        it: [
+          {
+            name: "UX/UI Designer",
+            icon: "🎨",
+            description:
+              "Create intuitive and beautiful user experiences for digital products.",
+            skills: ["Creativity", "Design", "Tech"],
+            salary: "$70,000 - $130,000/year",
+            education: "Bachelor's in Design, HCI, or related field",
+            matchReason:
+              "Your creativity combined with tech skills makes you ideal for designing user interfaces.",
+          },
+        ],
+        design: [
+          {
+            name: "Graphic Designer",
+            icon: "🖌️",
+            description:
+              "Create visual concepts to communicate ideas that inspire and inform.",
+            skills: ["Creativity", "Art", "Communication"],
+            salary: "$45,000 - $85,000/year",
+            education: "Bachelor's in Graphic Design or Fine Arts",
+            matchReason:
+              "Your artistic abilities and creative thinking are perfect for visual design work.",
+          },
+        ],
+        commerce: [
+          {
+            name: "Business Analyst",
+            icon: "💼",
+            description:
+              "Help organizations improve processes and achieve business goals.",
+            skills: ["Analysis", "Communication", "Business"],
+            salary: "$65,000 - $120,000/year",
+            education: "Bachelor's in Business Administration or related field",
+            matchReason:
+              "Your analytical and communication skills are key assets for business analysis.",
+          },
+        ],
+      };
+
+      let selectedSubjects = [];
+      let skillRatings = {};
+
+      // Initialize subjects
+      function initSubjects() {
+        const grid = document.getElementById("subjectsGrid");
+        subjects.forEach((subject) => {
+          const chip = document.createElement("div");
+          chip.className = "subject-chip";
+          chip.textContent = subject;
+          chip.onclick = () => toggleSubject(subject, chip);
+          grid.appendChild(chip);
+        });
+      }
+
+      // Initialize skills
+      function initSkills() {
+        const container = document.getElementById("skillsContainer");
+        skills.forEach((skill) => {
+          skillRatings[skill.id] = 5;
+
+          const skillDiv = document.createElement("div");
+          skillDiv.className = "skill-item";
+          skillDiv.innerHTML = `
+                    <div class="skill-header">
+                        <span class="skill-name">${skill.name}</span>
+                        <span class="skill-value" id="${skill.id}-value">5</span>
+                    </div>
+                    <input type="range" min="1" max="10" value="5" 
+                           oninput="updateSkill('${skill.id}', this.value)">
+                `;
+          container.appendChild(skillDiv);
+        });
+      }
+
+      // Toggle subject selection
+      function toggleSubject(subject, element) {
+        if (selectedSubjects.includes(subject)) {
+          selectedSubjects = selectedSubjects.filter((s) => s !== subject);
+          element.classList.remove("selected");
+        } else {
+          selectedSubjects.push(subject);
+          element.classList.add("selected");
+        }
+      }
+
+      // Update skill rating
+      function updateSkill(skillId, value) {
+        skillRatings[skillId] = parseInt(value);
+        document.getElementById(`${skillId}-value`).textContent = value;
+      }
+
+      // Generate career suggestions
+      function generateCareerSuggestions() {
+        const hobbies = document.getElementById("hobbies").value;
+        const studyGoal = document.getElementById("studyGoal").value;
+
+        if (selectedSubjects.length === 0 || !hobbies || !studyGoal) {
+          alert("Please fill in all fields before generating suggestions.");
+          return;
+        }
+
+        // Show loading
+        document.getElementById("loadingSpinner").classList.add("show");
+
+        // Simulate AI processing
+        setTimeout(() => {
+          document.getElementById("loadingSpinner").classList.remove("show");
+
+          // Get careers based on study goal
+          const careers = careerDatabase[studyGoal] || [];
+
+          // Display results
+          displayResults(careers);
+
+          // Scroll to results
+          document
+            .getElementById("resultsSection")
+            .scrollIntoView({ behavior: "smooth" });
+        }, 2000);
+      }
+
+      // Display results
+      function displayResults(careers) {
+        const resultsSection = document.getElementById("resultsSection");
+        const careersGrid = document.getElementById("careersGrid");
+
+        resultsSection.classList.add("show");
+
+        // Generate career cards
+        careersGrid.innerHTML = careers
+          .map(
+            (career) => `
+                <div class="career-card">
+                    <div class="career-icon">${career.icon}</div>
+                    <h3 class="career-name">${career.name}</h3>
+                    <p class="career-description">${career.description}</p>
+                    
+                    <div class="career-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Skills:</span>
+                            <div class="skill-tags">
+                                ${career.skills
+                                  .map(
+                                    (s) => `<span class="skill-tag">${s}</span>`
+                                  )
+                                  .join("")}
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Salary:</span>
+                            <span class="detail-value">${career.salary}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Education:</span>
+                            <span class="detail-value">${
+                              career.education
+                            }</span>
+                        </div>
+                    </div>
+                    
+                    <div class="match-section">
+                        <div class="match-title">✨ Why this match?</div>
+                        <div class="match-text">${career.matchReason}</div>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+
+        // Update strength profile
+        updateStrengthProfile();
+      }
+
+      // Update strength profile
+      function updateStrengthProfile() {
+        const profile = document.getElementById("strengthProfile");
+
+        const strengths = [
+          { name: "Analytical Skills", value: skillRatings.logic },
+          { name: "Creativity", value: skillRatings.creativity },
+          { name: "Communication", value: skillRatings.communication },
+          { name: "Tech Adaptability", value: skillRatings.tech },
+          { name: "Leadership", value: skillRatings.leadership },
+        ];
+
+        profile.innerHTML = strengths
+          .map(
+            (strength) => `
+                <div class="strength-item">
+                    <div class="strength-label">
+                        <span class="strength-name">${strength.name}</span>
+                        <span class="strength-score">${strength.value}/10</span>
+                    </div>
+                    <div class="strength-bar">
+                        <div class="strength-fill" style="width: ${
+                          strength.value * 10
+                        }%"></div>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // Initialize
+      initSubjects();
+      initSkills();
+    </script>
+    <script src="NavComponent.js"></script>
+  </body>
+</html>

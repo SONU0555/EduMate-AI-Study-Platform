@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="NavComponent.css" />
+    <title>AI Notes Summarizer - AI Study Companion</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #667eea 0%,
+          #764ba2 50%,
+          #f093fb 100%
+        );
+        min-height: 100vh;
+        padding: 2rem 1rem;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        margin-top: 80px;
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .page-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: white;
+        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        margin-bottom: 0.5rem;
+      }
+
+      .page-description {
+        font-size: 1.125rem;
+        color: rgba(255, 255, 255, 0.95);
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+
+      /* Main Grid */
+      .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      /* Card Styles */
+      .card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      .card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      /* Text Area */
+      .notes-textarea {
+        width: 100%;
+        min-height: 300px;
+        padding: 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 16px;
+        font-size: 0.95rem;
+        font-family: inherit;
+        resize: vertical;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+        line-height: 1.6;
+      }
+
+      .notes-textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+      }
+
+      /* File Upload */
+      .upload-area {
+        margin-top: 1.5rem;
+        border: 2px dashed #d1d5db;
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        background: #f9fafb;
+      }
+
+      .upload-area:hover {
+        border-color: #667eea;
+        background: #f3f4f6;
+      }
+
+      .upload-area.dragover {
+        border-color: #667eea;
+        background: #ede9fe;
+      }
+
+      .upload-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      .upload-text {
+        font-size: 1rem;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+      }
+
+      .upload-hint {
+        font-size: 0.875rem;
+        color: #9ca3af;
+      }
+
+      .file-input {
+        display: none;
+      }
+
+      .uploaded-file {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: #ede9fe;
+        border-radius: 12px;
+        display: none;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .uploaded-file.show {
+        display: flex;
+      }
+
+      .file-name {
+        flex: 1;
+        color: #5b21b6;
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      .remove-file {
+        background: #fecaca;
+        color: #991b1b;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+      }
+
+      .remove-file:hover {
+        background: #fee2e2;
+      }
+
+      /* Summary Level */
+      .summary-level {
+        margin-top: 1.5rem;
+      }
+
+      .level-label {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .level-options {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .level-option {
+        flex: 1;
+        padding: 0.875rem;
+        border: 2px solid #e5e7eb;
+        background: white;
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        color: #6b7280;
+      }
+
+      .level-option:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+      }
+
+      .level-option.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+
+      /* Generate Button */
+      .btn-generate {
+        width: 100%;
+        padding: 1.25rem;
+        border: none;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-size: 1.125rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        margin-top: 1.5rem;
+      }
+
+      .btn-generate:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-generate:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* Summary Result */
+      .summary-result {
+        min-height: 300px;
+        max-height: 500px;
+        overflow-y: auto;
+        padding: 1.5rem;
+        background: #f9fafb;
+        border: 2px solid #e5e7eb;
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
+        line-height: 1.8;
+        color: #374151;
+        font-size: 0.95rem;
+      }
+
+      .summary-result.empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+        font-style: italic;
+      }
+
+      .summary-result::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .summary-result::-webkit-scrollbar-track {
+        background: #f3f4f6;
+        border-radius: 4px;
+      }
+
+      .summary-result::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 4px;
+      }
+
+      .summary-result::-webkit-scrollbar-thumb:hover {
+        background: #9ca3af;
+      }
+
+      /* Action Buttons */
+      .action-buttons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+
+      .action-btn {
+        padding: 0.875rem 1rem;
+        border: 2px solid #e5e7eb;
+        background: white;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .action-btn:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+      }
+
+      .btn-copy {
+        color: #1e40af;
+      }
+
+      .btn-download {
+        color: #059669;
+      }
+
+      .btn-regenerate {
+        color: #7c3aed;
+      }
+
+      .action-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* Loading Spinner */
+      .spinner {
+        display: none;
+        width: 40px;
+        height: 40px;
+        border: 4px solid #e5e7eb;
+        border-top-color: #667eea;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 2rem auto;
+      }
+
+      .spinner.show {
+        display: block;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* AI Helper Tip */
+      .ai-helper {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 20px;
+        padding: 1.5rem 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+      }
+
+      .helper-icon {
+        font-size: 2.5rem;
+        flex-shrink: 0;
+      }
+
+      .helper-content {
+        flex: 1;
+      }
+
+      .helper-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .helper-text {
+        font-size: 0.95rem;
+        opacity: 0.95;
+        line-height: 1.5;
+      }
+
+      /* Stats */
+      .stats-bar {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding: 1rem;
+        background: #f0f9ff;
+        border-radius: 12px;
+      }
+
+      .stat-item {
+        flex: 1;
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #1e40af;
+      }
+
+      .stat-label {
+        font-size: 0.85rem;
+        color: #6b7280;
+        font-weight: 600;
+        margin-top: 0.25rem;
+      }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .main-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .page-title {
+          font-size: 2rem;
+        }
+
+        .card {
+          padding: 1.5rem;
+        }
+
+        .level-options {
+          flex-direction: column;
+        }
+
+        .ai-helper {
+          flex-direction: column;
+          text-align: center;
+        }
+      }
+
+      /* Success Toast */
+      .toast {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: #10b981;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        display: none;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideIn 0.3s ease;
+        z-index: 1000;
+      }
+
+      .toast.show {
+        display: flex;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(400px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <!-- Logo -->
+        <a href="#" class="logo">
+          <span><span style="font-size: 2rem">AI</span> EduMate</span>
+        </a>
+
+        <!-- Desktop Navigation Menu -->
+        <ul class="nav-menu">
+          <li>
+            <a onclick="window.location.href='./index.html'">Dashboard</a>
+          </li>
+          <li><a href="./Assignment.html">Assignments</a></li>
+          <li><a href="./Pomodoro.html">Pomodoro Timer</a></li>
+          <li><a href="./CareerGuide.html">Career Guide</a></li>
+        </ul>
+
+        <!-- Auth Buttons (Desktop) -->
+        <div class="nav-auth">
+          <button
+            class="btn-login"
+            onclick="window.location.href='./LoginPage.html'"
+          >
+            Login
+          </button>
+          <button
+            class="btn-signup"
+            onclick="window.location.href='./SignupPage.html'"
+          >
+            Sign Up
+          </button>
+        </div>
+
+        <!-- Hamburger Menu Icon -->
+        <div class="hamburger" onclick="toggleMobileMenu()">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <ul>
+        <li><a onclick="window.location.href='./index.html'">Dashboard</a></li>
+        <li>
+          <a href="./Assignment.html" onclick="closeMobileMenu()"
+            >Assignments</a
+          >
+        </li>
+        <li>
+          <a href="./Pomodoro.html" onclick="closeMobileMenu()"
+            >Pomodoro Timer</a
+          >
+        </li>
+        <li>
+          <a href="./CareerGuide.html" onclick="closeMobileMenu()"
+            >Career Guide</a
+          >
+        </li>
+      </ul>
+      <div class="mobile-auth">
+        <button
+          class="btn-login"
+          onclick="window.location.href='./LoginPage.html'"
+        >
+          Login
+        </button>
+        <button
+          class="btn-signup"
+          onclick="window.location.href='./SignupPage.html'"
+        >
+          Sign Up
+        </button>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <h1 class="page-title">📝 AI Notes Summarizer</h1>
+        <p class="page-description">
+          Paste your notes or upload a file — AI will generate a quick and
+          concise summary
+        </p>
+      </div>
+
+      <!-- Main Grid -->
+      <div class="main-grid">
+        <!-- Left Column - Input -->
+        <div class="card">
+          <h2 class="card-title">📄 Your Notes</h2>
+
+          <!-- Text Area -->
+          <textarea
+            class="notes-textarea"
+            id="notesInput"
+            placeholder="Paste your notes here... 
+
+Example:
+- Photosynthesis is the process by which plants convert light energy into chemical energy
+- It occurs in the chloroplasts of plant cells
+- The main reactants are carbon dioxide and water
+- The products are glucose and oxygen
+- Light and dark reactions are the two main stages..."
+          ></textarea>
+
+          <!-- File Upload -->
+          <div
+            class="upload-area"
+            id="uploadArea"
+            onclick="document.getElementById('fileInput').click()"
+          >
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">Click to upload or drag & drop</div>
+            <div class="upload-hint">Supports PDF, TXT, DOCX files</div>
+          </div>
+          <input
+            type="file"
+            id="fileInput"
+            class="file-input"
+            accept=".pdf,.txt,.docx"
+            onchange="handleFileSelect(event)"
+          />
+
+          <div class="uploaded-file" id="uploadedFile">
+            <span>📄</span>
+            <span class="file-name" id="fileName"></span>
+            <button class="remove-file" onclick="removeFile()">Remove</button>
+          </div>
+
+          <!-- Summary Level -->
+          <div class="summary-level">
+            <label class="level-label">Choose summary level:</label>
+            <div class="level-options">
+              <div class="level-option" onclick="selectLevel('short')">
+                📋 Short
+              </div>
+              <div class="level-option active" onclick="selectLevel('medium')">
+                📄 Medium
+              </div>
+              <div class="level-option" onclick="selectLevel('detailed')">
+                📚 Detailed
+              </div>
+            </div>
+          </div>
+
+          <!-- Generate Button -->
+          <button class="btn-generate" onclick="generateSummary()">
+            ✨ Generate Summary
+          </button>
+        </div>
+
+        <!-- Right Column - Output -->
+        <div class="card">
+          <h2 class="card-title">🤖 AI Summary Result</h2>
+
+          <div class="spinner" id="loadingSpinner"></div>
+
+          <div class="summary-result empty" id="summaryResult">
+            Your AI-generated summary will appear here...
+          </div>
+
+          <div class="stats-bar" id="statsBar" style="display: none">
+            <div class="stat-item">
+              <div class="stat-value" id="originalWords">0</div>
+              <div class="stat-label">Original Words</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="summaryWords">0</div>
+              <div class="stat-label">Summary Words</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="compressionRate">0%</div>
+              <div class="stat-label">Compression</div>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button
+              class="action-btn btn-copy"
+              id="copyBtn"
+              onclick="copySummary()"
+              disabled
+            >
+              📋 Copy
+            </button>
+            <button
+              class="action-btn btn-download"
+              id="downloadBtn"
+              onclick="downloadSummary()"
+              disabled
+            >
+              💾 Download
+            </button>
+            <button
+              class="action-btn btn-regenerate"
+              id="regenerateBtn"
+              onclick="regenerateSummary()"
+              disabled
+            >
+              🔄 Regenerate
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Helper Tip -->
+      <div class="ai-helper">
+        <div class="helper-icon">💡</div>
+        <div class="helper-content">
+          <div class="helper-title">Pro Tip</div>
+          <div class="helper-text">
+            You can also upload lecture notes or textbooks for quick revision.
+            The AI will extract key concepts and create an easy-to-understand
+            summary!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <span>✓</span>
+      <span id="toastMessage">Copied to clipboard!</span>
+    </div>
+
+    <script>
+      let selectedLevel = "medium";
+      let currentSummary = "";
+      let uploadedFileName = "";
+
+      // Select summary level
+      function selectLevel(level) {
+        selectedLevel = level;
+        document.querySelectorAll(".level-option").forEach((opt) => {
+          opt.classList.remove("active");
+        });
+        event.target.classList.add("active");
+      }
+
+      // Handle file selection
+      function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+          uploadedFileName = file.name;
+          document.getElementById("fileName").textContent = file.name;
+          document.getElementById("uploadedFile").classList.add("show");
+
+          // Simulate file reading
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            document.getElementById(
+              "notesInput"
+            ).value = `[File uploaded: ${file.name}]\n\nFile content will be processed here...`;
+          };
+          reader.readAsText(file);
+        }
+      }
+
+      // Remove file
+      function removeFile() {
+        uploadedFileName = "";
+        document.getElementById("fileInput").value = "";
+        document.getElementById("uploadedFile").classList.remove("show");
+        document.getElementById("notesInput").value = "";
+      }
+
+      // Drag and drop
+      const uploadArea = document.getElementById("uploadArea");
+
+      uploadArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        uploadArea.classList.add("dragover");
+      });
+
+      uploadArea.addEventListener("dragleave", () => {
+        uploadArea.classList.remove("dragover");
+      });
+
+      uploadArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove("dragover");
+
+        const file = e.dataTransfer.files[0];
+        if (file) {
+          document.getElementById("fileInput").files = e.dataTransfer.files;
+          handleFileSelect({ target: { files: [file] } });
+        }
+      });
+
+      // Generate summary
+      function generateSummary() {
+        const notes = document.getElementById("notesInput").value;
+
+        if (!notes.trim()) {
+          alert("Please enter some notes or upload a file first!");
+          return;
+        }
+
+        // Show loading
+        document.getElementById("loadingSpinner").classList.add("show");
+        document.getElementById("summaryResult").classList.add("empty");
+        document.getElementById("summaryResult").textContent =
+          "AI is analyzing your notes...";
+
+        // Disable buttons
+        document.getElementById("copyBtn").disabled = true;
+        document.getElementById("downloadBtn").disabled = true;
+        document.getElementById("regenerateBtn").disabled = true;
+
+        // Simulate AI processing
+        setTimeout(() => {
+          document.getElementById("loadingSpinner").classList.remove("show");
+
+          // Generate summary based on level
+          const summaries = {
+            short: generateShortSummary(notes),
+            medium: generateMediumSummary(notes),
+            detailed: generateDetailedSummary(notes),
+          };
+
+          currentSummary = summaries[selectedLevel];
+
+          // Display summary
+          const resultEl = document.getElementById("summaryResult");
+          resultEl.classList.remove("empty");
+          resultEl.innerHTML = currentSummary;
+
+          // Update stats
+          updateStats(notes, currentSummary);
+
+          // Enable buttons
+          document.getElementById("copyBtn").disabled = false;
+          document.getElementById("downloadBtn").disabled = false;
+          document.getElementById("regenerateBtn").disabled = false;
+
+          // Show stats
+          document.getElementById("statsBar").style.display = "flex";
+        }, 2500);
+      }
+
+      // Generate different summary levels
+      function generateShortSummary(text) {
+        return `<strong>Quick Summary:</strong><br><br>
+                • The notes cover fundamental concepts and key points<br>
+                • Main topics include essential information and core principles<br>
+                • Critical details have been extracted for quick revision<br><br>
+                <em>Generated in ${selectedLevel} mode</em>`;
+      }
+
+      function generateMediumSummary(text) {
+        return `<strong>Comprehensive Summary:</strong><br><br>
+                <strong>Key Concepts:</strong><br>
+                • Main topic: Core principles and fundamental understanding<br>
+                • Important processes and their mechanisms<br>
+                • Relationships between different components<br><br>
+                
+                <strong>Main Points:</strong><br>
+                • The notes explain essential concepts in detail<br>
+                • Multiple examples and applications are provided<br>
+                • Critical thinking and analysis are emphasized<br><br>
+                
+                <strong>Conclusion:</strong><br>
+                Understanding these concepts will help in mastering the subject matter.<br><br>
+                <em>Generated in ${selectedLevel} mode</em>`;
+      }
+
+      function generateDetailedSummary(text) {
+        return `<strong>Detailed Analysis:</strong><br><br>
+                <strong>Introduction:</strong><br>
+                The provided notes contain comprehensive information about the subject matter, covering theoretical foundations and practical applications.<br><br>
+                
+                <strong>Main Concepts:</strong><br>
+                1. <strong>Primary Topic:</strong> The notes discuss fundamental principles and their real-world relevance<br>
+                2. <strong>Key Processes:</strong> Detailed explanation of mechanisms and procedures<br>
+                3. <strong>Applications:</strong> Practical examples demonstrating concept implementation<br><br>
+                
+                <strong>Supporting Details:</strong><br>
+                • Theoretical framework provides solid foundation<br>
+                • Evidence and examples support main arguments<br>
+                • Connections between concepts are clearly established<br><br>
+                
+                <strong>Critical Analysis:</strong><br>
+                • Strengths: Comprehensive coverage of essential topics<br>
+                • Key takeaways: Understanding core principles is crucial<br>
+                • Recommendations: Focus on practical applications<br><br>
+                
+                <strong>Conclusion:</strong><br>
+                Mastering these concepts requires both theoretical understanding and practical application. Regular revision is recommended.<br><br>
+                <em>Generated in ${selectedLevel} mode with detailed analysis</em>`;
+      }
+
+      // Update statistics
+      function updateStats(original, summary) {
+        const originalWords = original.trim().split(/\s+/).length;
+        const summaryWords = summary
+          .replace(/<[^>]*>/g, "")
+          .trim()
+          .split(/\s+/).length;
+        const compression = Math.round(
+          (1 - summaryWords / originalWords) * 100
+        );
+
+        document.getElementById("originalWords").textContent = originalWords;
+        document.getElementById("summaryWords").textContent = summaryWords;
+        document.getElementById("compressionRate").textContent =
+          compression + "%";
+      }
+
+      // Copy summary
+      function copySummary() {
+        const text = document.getElementById("summaryResult").innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          showToast("Summary copied to clipboard!");
+        });
+      }
+
+      // Download summary
+      function downloadSummary() {
+        const text = document.getElementById("summaryResult").innerText;
+        const blob = new Blob([text], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "ai-summary.txt";
+        a.click();
+        URL.revokeObjectURL(url);
+
+        showToast("Summary downloaded successfully!");
+      }
+
+      // Regenerate summary
+      function regenerateSummary() {
+        showToast("Regenerating summary with different approach...");
+        generateSummary();
+      }
+
+      // Show toast notification
+      function showToast(message) {
+        const toast = document.getElementById("toast");
+        document.getElementById("toastMessage").textContent = message;
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+    </script>
+    <script src="NavComponent.js"></script>
+  </body>
+</html>
